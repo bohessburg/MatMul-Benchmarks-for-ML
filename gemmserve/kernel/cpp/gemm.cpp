@@ -1,3 +1,5 @@
+extern "C" {
+
 //Naive O(n^3) matrix multiplication with no cache awareness
 //A is MxK, B is KxN, C is MxN
 void matmul_basic_ijk(const float* A, const float* B, float* C, int M, int N, int K) {
@@ -55,3 +57,5 @@ void matmul_tiled(const float* A, const float* B, float* C, int M, int N, int K)
         }
     }
 }
+
+} // extern "C"

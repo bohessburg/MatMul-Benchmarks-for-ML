@@ -1,5 +1,10 @@
 version: "3.9"
 
+environment:
+  MODEL_S3_BUCKET: gemmserve-models
+  MODEL_S3_KEY: weights.npz
+  AWS_REGION: us-west-2
+
 services:
   api:
     build: ./api
