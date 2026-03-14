@@ -34,18 +34,30 @@ def softmax(logits: np.ndarray) -> np.ndarray:
     return e / e.sum(axis=-1, keepdims=True)
 
 
-def forward(x: np.ndarray, layers: list[tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
+def forward(x: np.ndarray, layers: list[tuple[np.ndarray, np.ndarray]], matmul=None) -> np.ndarray:
     """
     MLP forward pass: Linear -> ReLU -> Linear -> ReLU -> Linear.
 
     x: input array of shape (batch, 50000) or (50000,)
+    matmul: optional callable (A, B) -> C to use instead of numpy @
     Returns: logits of shape (batch, 20) or (20,)
     """
+    if matmul is None:
+        matmul = np.matmul
+
+    # Ensure x is 2D for the matmul kernels
+    squeezed = x.ndim == 1
+    if squeezed:
+        x = x[np.newaxis, :]
+
     for W, b in layers[:-1]:
-        x = x @ W.T + b
+        x = matmul(x, W.T) + b
         x = np.maximum(x, 0)
     W, b = layers[-1]
-    x = x @ W.T + b
+    x = matmul(x, W.T) + b
+
+    if squeezed:
+        x = x.squeeze(0)
     return x
 
 

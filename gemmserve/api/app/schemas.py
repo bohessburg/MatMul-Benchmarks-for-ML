@@ -1,11 +1,14 @@
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field
+
+Kernel = Literal["numpy", "naive_ijk", "optimized_ikj", "tiled"]
 
 
 class PredictRequest(BaseModel):
     text: str = Field(..., min_length=1, description="Text to classify")
-    kernel: str = Field(..., description="Which GEMM kernel is being used in the prediction forward pass")
+    kernel: Kernel = Field(default="numpy", description="Which GEMM kernel to use for the forward pass")
     model_version: str = Field(..., description="MLP model version")
 
 

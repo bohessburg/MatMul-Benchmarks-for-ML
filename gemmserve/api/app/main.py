@@ -9,6 +9,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db import get_db, init_db
+from app.inference.kernels import get_kernel
 from app.inference.model import forward, load_labels, load_model, softmax
 from app.models import Prediction
 from app.schemas import PredictionRecord, PredictRequest, PredictResponse
@@ -54,12 +55,14 @@ def predict(req: PredictRequest, db: Session = Depends(get_db)):
     layers = resources["layers"]
     labels = resources["labels"]
 
+    matmul = get_kernel(req.kernel)
+
     t0 = time.perf_counter()
 
     features = vectorizer.transform([req.text])
     x = np.asarray(features.todense(), dtype=np.float32).squeeze(0)
 
-    logits = forward(x, layers)
+    logits = forward(x, layers, matmul=matmul)
     probs = softmax(logits)
 
     latency_ms = (time.perf_counter() - t0) * 1000

@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+
+# C++ / CMake build artifacts
+build/
+*.o
+*.so
+*.dylib
+*.out
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Environment / secrets
+.env
+
+# ML artifacts
+scripts/outputs/
+*.bin
+*.pkl
