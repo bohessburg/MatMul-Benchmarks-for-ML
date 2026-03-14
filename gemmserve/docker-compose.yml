@@ -1,19 +1,20 @@
 version: "3.9"
 
-environment:
-  MODEL_S3_BUCKET: gemmserve-models
-  MODEL_S3_KEY: weights.npz
-  AWS_REGION: us-west-2
-
 services:
   api:
     build: ./api
     ports:
       - "8000:8000"
+    volumes:
+      - ./scripts:/scripts
+      - ./kernel:/kernel
     depends_on:
       - db
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/gemmserve
+      MODEL_S3_BUCKET: gemmserve-models
+      MODEL_S3_KEY: weights.npz
+      AWS_REGION: us-west-2
 
   db:
     image: postgres:15
@@ -23,4 +24,4 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: gemmserve
     ports:
-      - "5432:5432"
+      - "5433:5432"
